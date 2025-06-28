@@ -40,3 +40,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make eval
+
+      # Simpan ke branch update
+      - name: Update Branch
+        env:
+          NAME: ${{ secrets.USER_NAME }}
+          EMAIL: ${{ secrets.USER_EMAIL }}
+        run: make update-branch USER_NAME=$NAME USER_EMAIL=$EMAIL
