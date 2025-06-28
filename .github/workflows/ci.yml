@@ -1,0 +1,42 @@
+# Nama workflow
+name: Continuous Integration
+
+# Trigger
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions: write-all
+jobs:
+  # Nama job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout kode dari repositori ke runner
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Menyiapkan CML
+      - name: Setup CML
+        uses: iterative/setup-cml@v2
+        
+      # Menginstal library yang dibutuhkan dari requirements.txt
+      - name: Install Packages
+        run: make install
+
+      # Memformat kode
+      - name: Format Code
+        run: make format
+
+      # Train model
+      - name: Train Model
+        run: make train
+
+      # Mengevaluasi model
+      - name: Evaluate Model
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make eval
