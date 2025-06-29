@@ -1,13 +1,17 @@
+# Target untuk menginstal semua dependensi Python
 install:
 	pip install --upgrade pip &&\
 		pip install -r requirements.txt
 
+# Target untuk memformat kode dengan Black
 format:
 	black *.py
 
+# Target untuk menjalankan skrip pelatihan model
 train:
 	python train.py
 
+# Target untuk mengevaluasi model dan membuat laporan dengan CML
 eval:
 	echo "## Model Metrics" > report.md
 	cat ./Results/metrics.txt >> report.md
@@ -15,6 +19,7 @@ eval:
 	echo '![Confusion Matrix](./Results/model_results.png)' >> report.md
 	cml comment create report.md
 
+# Target untuk menambahkan perubahan ke branch 'update'
 update-branch:
 	git config --global user.name $(USER_NAME)
 	git config --global user.email $(USER_EMAIL)
@@ -22,15 +27,23 @@ update-branch:
 	git commit -am "Update with new results"
 	git push --force origin HEAD:update
 
+# Target untuk login ke Hugging Face
 hf-login:
 	git pull origin update
 	git switch update
 	pip install -U "huggingface_hub[cli]"
 	huggingface-cli login --token $(HF) --add-to-git-credential
 
+# Target untuk mengunggah semua file ke Hugging Face Space
 push-hub:
-	huggingface-cli upload mazenbuk/MLOpsDrug ./App . --repo-type=space --commit-message="Sync App files"
-	huggingface-cli upload mazenbuk/MLOpsDrug ./Model Model --repo-type=space --commit-message="Sync Model"
-	huggingface-cli upload mazenbuk/MLOpsDrug ./Results Results --repo-type=space --commit-message="Sync Results"
+	# GANTI 'mazenbuk/MLOpsdrug' DENGAN NAMA SPACE ANDA YANG BENAR
+	# Unggah isi dari './App' ke root direktori ('.') Space
+	huggingface-cli upload mazenbuk/MLOpsdrug ./App . --repo-type=space --commit-message="Sync App files"
+	
+	# Unggah file-file PENTING secara individual dan eksplisit
+	huggingface-cli upload mazenbuk/MLOpsdrug ./Model/drug_pipeline.skops Model/drug_pipeline.skops --repo-type=space --commit-message="Sync Model File"
+	huggingface-cli upload mazenbuk/MLOpsdrug ./Results/metrics.txt Results/metrics.txt --repo-type=space --commit-message="Sync Metrics File"
+	huggingface-cli upload mazenbuk/MLOpsdrug ./Results/model_results.png Results/model_results.png --repo-type=space --commit-message="Sync Confusion Matrix"
 
+# Target utama untuk proses deployment
 deploy: hf-login push-hub
