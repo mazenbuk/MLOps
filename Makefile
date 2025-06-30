@@ -36,11 +36,7 @@ hf-login:
 
 # Target untuk mengunggah semua file ke Hugging Face Space
 push-hub:
-	# GANTI 'mazenbuk/MLOpsdrug' DENGAN NAMA SPACE ANDA YANG BENAR
-	# Unggah isi dari './App' ke root direktori ('.') Space
 	huggingface-cli upload mazenbuk/MLOpsdrug ./App . --repo-type=space --commit-message="Sync App files"
-	
-	# Unggah file-file PENTING secara individual dan eksplisit
 	huggingface-cli upload mazenbuk/MLOpsdrug ./Model/drug_pipeline.skops Model/drug_pipeline.skops --repo-type=space --commit-message="Sync Model File"
 	huggingface-cli upload mazenbuk/MLOpsdrug ./Results/metrics.txt Results/metrics.txt --repo-type=space --commit-message="Sync Metrics File"
 	huggingface-cli upload mazenbuk/MLOpsdrug ./Results/model_results.png Results/model_results.png --repo-type=space --commit-message="Sync Confusion Matrix"
